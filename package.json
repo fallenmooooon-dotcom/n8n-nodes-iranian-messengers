@@ -18,5 +18,9 @@
   },
   "engines": {
     "node": ">=20.19"
+  },
+  "devDependencies": {
+    "@unrs/resolver-binding-darwin-arm64": "^1.13.0",
+    "@unrs/resolver-binding-wasm32-wasi": "^1.13.0"
   }
 }

@@ -1,9 +1,11 @@
-import type { ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
+import type { Icon, ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class RubikaApi implements ICredentialType {
 	name = 'rubikaApi';
 
 	displayName = 'Rubika API';
+
+	icon: Icon = { light: 'file:rubika.svg', dark: 'file:rubika.dark.svg' };
 
 	documentationUrl = 'https://rubika.ir/botapi';
 
@@ -23,7 +25,7 @@ export class RubikaApi implements ICredentialType {
 			type: 'string',
 			default: 'https://botapi.rubika.ir/v3',
 			description:
-				'Address of the Rubika Bot API including the version, without a trailing slash. Change it only if you use a proxy',
+				'Address of the Rubika Bot API including the version without a trailing slash (change only if you use a proxy)',
 		},
 	];
 
@@ -33,7 +35,7 @@ export class RubikaApi implements ICredentialType {
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL:
-				'={{ $credentials.baseUrl.trim().replace(/\\/+$/, "") }}/{{ $credentials.accessToken.trim().replace(/^\\/+|\\/+$/g, "") }}',
+				'={{ ($credentials.baseUrl || "https://botapi.rubika.ir/v3").trim().replace(/\\/+$/, "") }}/{{ ($credentials.accessToken || "").trim().replace(/^\\/+|\\/+$/g, "") }}',
 			url: '/getMe',
 			method: 'POST',
 			body: {},

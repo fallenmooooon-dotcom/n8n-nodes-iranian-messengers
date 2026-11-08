@@ -1,0 +1,9 @@
+.DS_Store
+.git
+.github
+.test-build
+coverage
+test
+tsconfig*.json
+eslint.config.mjs
+.prettierrc.js

@@ -105,8 +105,13 @@ export class BaleTrigger implements INodeType {
 		default: {
 			async checkExists(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default');
-				const info = (await baleApiRequest.call(this, 'getWebhookInfo')) as IDataObject | undefined;
-				return typeof info?.url === 'string' && info.url !== '' && info.url === webhookUrl;
+				try {
+					const info = (await baleApiRequest.call(this, 'getWebhookInfo')) as IDataObject | undefined;
+					return typeof info?.url === 'string' && info.url !== '' && info.url === webhookUrl;
+				} catch (error) {
+					this.logger?.error('Failed to check webhook existence', { error });
+					return false;
+				}
 			},
 
 			async create(this: IHookFunctions): Promise<boolean> {
@@ -117,7 +122,7 @@ export class BaleTrigger implements INodeType {
 					if (error instanceof BaleValidationError) {
 						throw new NodeOperationError(this.getNode(), error.message);
 					}
-					throw error;
+					throw new NodeOperationError(this.getNode(), error as Error);
 				}
 				await baleApiRequest.call(this, 'setWebhook', { url: webhookUrl });
 				return true;
@@ -127,7 +132,8 @@ export class BaleTrigger implements INodeType {
 				try {
 					// An empty URL removes the webhook.
 					await baleApiRequest.call(this, 'setWebhook', { url: '' });
-				} catch {
+				} catch (error) {
+					this.logger?.error('Failed to delete webhook', { error });
 					return false;
 				}
 				return true;

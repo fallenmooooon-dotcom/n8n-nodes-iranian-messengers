@@ -4,8 +4,9 @@ import type {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	JsonObject,
 } from 'n8n-workflow';
-import { NodeConnectionTypes, NodeOperationError, sleep } from 'n8n-workflow';
+import { NodeApiError, NodeConnectionTypes, NodeOperationError, sleep } from 'n8n-workflow';
 
 import { RubikaValidationError } from './helpers';
 import { executeOperation } from './operations';
@@ -30,6 +31,9 @@ export class Rubika implements INodeType {
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
+		if (items.length === 0) {
+			return [[]];
+		}
 		const returnData: INodeExecutionData[] = [];
 
 		const resource = this.getNodeParameter('resource', 0) as string;
@@ -59,10 +63,9 @@ export class Rubika implements INodeType {
 				if (error instanceof RubikaValidationError) {
 					throw new NodeOperationError(this.getNode(), error.message, { itemIndex: i });
 				}
-				const context = (error as { context?: IDataObject }).context;
-				if (context !== undefined) {
-					context.itemIndex = i;
-					throw error;
+				if (error instanceof NodeApiError) {
+					error.context.itemIndex = i;
+					throw new NodeApiError(this.getNode(), error as unknown as JsonObject, { itemIndex: i });
 				}
 				throw new NodeOperationError(this.getNode(), error as Error, { itemIndex: i });
 			}

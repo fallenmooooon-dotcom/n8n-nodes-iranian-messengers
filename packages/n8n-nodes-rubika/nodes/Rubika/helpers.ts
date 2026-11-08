@@ -151,9 +151,13 @@ export function requireText(value: string, label: string): string {
 export function parseJsonObject(value: unknown, label: string): Record<string, unknown> {
 	let parsed: unknown = value;
 	if (typeof value === 'string') {
+		let parseFailed = false;
 		try {
 			parsed = JSON.parse(value);
 		} catch {
+			parseFailed = true;
+		}
+		if (parseFailed) {
 			throw new RubikaValidationError(`${label} is not valid JSON`);
 		}
 	}

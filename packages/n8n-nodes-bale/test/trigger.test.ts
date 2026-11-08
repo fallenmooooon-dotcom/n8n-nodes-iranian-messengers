@@ -1,4 +1,6 @@
+// eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
 import assert from 'node:assert/strict';
+// eslint-disable-next-line @n8n/community-nodes/no-restricted-imports
 import { describe, it } from 'node:test';
 
 import { NodeOperationError } from 'n8n-workflow';

@@ -1,5 +1,5 @@
-import type { IBinaryKeyData, IDataObject, IExecuteFunctions } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
+import type { IBinaryKeyData, IDataObject, IExecuteFunctions, JsonObject } from 'n8n-workflow';
+import { NodeApiError, NodeOperationError } from 'n8n-workflow';
 
 import { rubikaApiRequest, rubikaDownloadFile, rubikaUploadFile } from './GenericFunctions';
 import {
@@ -191,7 +191,10 @@ const messageHandlers: Record<string, Handler> = {
 			if (httpCode === '404') {
 				return { json: toJson(await rubikaApiRequest.call(context, 'editInlineKeypad', body)) };
 			}
-			throw error;
+			if (error instanceof NodeApiError) {
+				throw new NodeApiError(context.getNode(), error as unknown as JsonObject);
+			}
+			throw new NodeOperationError(context.getNode(), error as Error);
 		}
 	},
 

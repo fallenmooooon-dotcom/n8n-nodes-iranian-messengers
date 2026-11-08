@@ -9,7 +9,7 @@ const CHAT_KEYPAD_FIELD: INodeProperties = {
 	type: 'string',
 	typeOptions: { rows: 4 },
 	default: '',
-	description: `Keypad shown at the bottom of the chat. ${KEYPAD_NOTE}. Button taps arrive as new messages`,
+	description: `Keypad shown at the bottom of the chat (${KEYPAD_NOTE}; button taps arrive as new messages)`,
 };
 
 const DISABLE_NOTIFICATION_FIELD: INodeProperties = {
@@ -26,7 +26,7 @@ const INLINE_KEYPAD_FIELD: INodeProperties = {
 	type: 'string',
 	typeOptions: { rows: 4 },
 	default: '',
-	description: `Buttons shown under the message. ${KEYPAD_NOTE}. Button taps arrive as inline messages`,
+	description: `Buttons shown under the message (${KEYPAD_NOTE}; button taps arrive as inline messages)`,
 };
 
 const REMOVE_CHAT_KEYPAD_FIELD: INodeProperties = {
@@ -42,7 +42,7 @@ const REPLY_TO_FIELD: INodeProperties = {
 	name: 'replyToMessageId',
 	type: 'string',
 	default: '',
-	description: 'ID of the message to reply to. Leave empty to send a normal message',
+	description: 'ID of the message to reply to (leave empty to send a normal message)',
 };
 
 const FORMATTING_FIELD: INodeProperties = {
@@ -53,12 +53,41 @@ const FORMATTING_FIELD: INodeProperties = {
 	placeholder: 'Add Formatting Part',
 	default: {},
 	description:
-		'Styles, links and mentions applied to parts of the text (up to 30). One invalid part makes Rubika reject the whole message',
+		'Styles, links and mentions applied to parts of the text up to 30 parts (one invalid part makes Rubika reject the whole message)',
 	options: [
 		{
 			displayName: 'Parts',
 			name: 'parts',
 			values: [
+				{
+					displayName: 'From Index',
+					name: 'fromIndex',
+					type: 'number',
+					default: 0,
+					description:
+						'Position where the formatted part starts where 0 is the first character (counted in UTF-16 units, so an emoji counts as 2)',
+				},
+				{
+					displayName: 'Length',
+					name: 'length',
+					type: 'number',
+					default: 1,
+					description: 'Length of the formatted part in UTF-16 units (must be greater than 0)',
+				},
+				{
+					displayName: 'Link URL',
+					name: 'linkUrl',
+					type: 'string',
+					default: '',
+					description: 'Target of the link (only used by the type Link)',
+				},
+				{
+					displayName: 'Mention User ID',
+					name: 'mentionUserId',
+					type: 'string',
+					default: '',
+					description: 'ID of the mentioned user (only used by the type Mention)',
+				},
 				{
 					displayName: 'Type',
 					name: 'type',
@@ -77,35 +106,6 @@ const FORMATTING_FIELD: INodeProperties = {
 						{ name: 'Underline', value: 'Underline' },
 					],
 					description: 'Kind of formatting to apply',
-				},
-				{
-					displayName: 'From Index',
-					name: 'fromIndex',
-					type: 'number',
-					default: 0,
-					description:
-						'Position where the formatted part starts (0 is the first character). Counted in UTF-16 units, so an emoji counts as 2',
-				},
-				{
-					displayName: 'Length',
-					name: 'length',
-					type: 'number',
-					default: 1,
-					description: 'Length of the formatted part in UTF-16 units. Must be greater than 0',
-				},
-				{
-					displayName: 'Link URL',
-					name: 'linkUrl',
-					type: 'string',
-					default: '',
-					description: 'Target of the link. Only used by the type Link',
-				},
-				{
-					displayName: 'Mention User ID',
-					name: 'mentionUserId',
-					type: 'string',
-					default: '',
-					description: 'ID of the mentioned user. Only used by the type Mention',
 				},
 			],
 		},
@@ -383,7 +383,7 @@ export const rubikaProperties: INodeProperties[] = [
 		required: true,
 		default: '',
 		displayOptions: { show: { resource: ['message'], operation: ['editInlineKeypad'] } },
-		description: `New buttons for the message. ${KEYPAD_NOTE}`,
+		description: `New buttons for the message (${KEYPAD_NOTE})`,
 	},
 
 	/* ---------------------------------------------------------------------- */
@@ -438,7 +438,7 @@ export const rubikaProperties: INodeProperties[] = [
 		required: true,
 		default: {},
 		displayOptions: { show: { resource: ['message'], operation: ['sendPoll'] } },
-		description: 'Answers users can choose from. At least two are needed',
+		description: 'Answers users can choose from (at least two are needed)',
 		options: [
 			{
 				displayName: 'Items',
@@ -534,7 +534,7 @@ export const rubikaProperties: INodeProperties[] = [
 			{ name: 'Video', value: 'Video', description: 'MP4 video up to 50 MB' },
 			{ name: 'Voice', value: 'Voice', description: 'Short voice message as an MP3' },
 		],
-		description: 'Kind of file to send. Rubika checks the format against this type',
+		description: 'Kind of file to send (Rubika checks the format against this type)',
 	},
 	{
 		displayName: 'File Source',
@@ -575,7 +575,7 @@ export const rubikaProperties: INodeProperties[] = [
 		displayOptions: {
 			show: { resource: ['file'], operation: ['send'], fileSource: ['binary'] },
 		},
-		description: 'Optional file name to send. Defaults to the file name of the binary data',
+		description: 'Optional file name to send (defaults to the file name of the binary data)',
 	},
 	{
 		displayName: 'File ID',
@@ -650,7 +650,7 @@ export const rubikaProperties: INodeProperties[] = [
 		required: true,
 		default: {},
 		displayOptions: { show: { resource: ['bot'], operation: ['setCommands'] } },
-		description: 'Commands users see when they type a slash. This replaces the existing list',
+		description: 'Commands users see when they type a slash (replaces the existing list)',
 		options: [
 			{
 				displayName: 'Items',
@@ -682,7 +682,7 @@ export const rubikaProperties: INodeProperties[] = [
 		required: true,
 		default: '',
 		displayOptions: { show: { resource: ['chat'], operation: ['setKeypad'] } },
-		description: `Keypad for the bottom of the chat. ${KEYPAD_NOTE}`,
+		description: `Keypad for the bottom of the chat (${KEYPAD_NOTE})`,
 	},
 
 	/* ---------------------------------------------------------------------- */
@@ -702,7 +702,7 @@ export const rubikaProperties: INodeProperties[] = [
 				typeOptions: { minValue: 0 },
 				default: 0,
 				description:
-					'Milliseconds to wait between two input items. Use it when Rubika answers with TOO_MANY_REQUESTS',
+					'Milliseconds to wait between two input items (use when Rubika answers with TOO_MANY_REQUESTS)',
 			},
 		],
 	},

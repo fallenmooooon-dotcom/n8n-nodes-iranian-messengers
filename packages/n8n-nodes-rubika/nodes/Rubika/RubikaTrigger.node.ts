@@ -102,7 +102,7 @@ export class RubikaTrigger implements INodeType {
 					if (error instanceof RubikaValidationError) {
 						throw new NodeOperationError(this.getNode(), error.message);
 					}
-					throw error;
+					throw new NodeOperationError(this.getNode(), error as Error);
 				}
 
 				const events = this.getNodeParameter('events', []) as string[];

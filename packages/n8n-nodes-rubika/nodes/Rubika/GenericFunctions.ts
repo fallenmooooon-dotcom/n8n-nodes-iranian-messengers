@@ -48,7 +48,7 @@ async function loadCredentials(
 		if (error instanceof RubikaValidationError) {
 			throw new NodeOperationError(context.getNode(), error.message);
 		}
-		throw error;
+		throw new NodeOperationError(context.getNode(), error as Error);
 	}
 }
 
@@ -81,10 +81,13 @@ function toNetworkError(
 	for (const secret of secrets) {
 		message = redactSecret(message, secret);
 	}
-	return new NodeApiError(context.getNode(), { message } as JsonObject, {
-		message: `Could not reach the Rubika API: ${message}`,
+	const fullMessage = `Could not reach the Rubika API: ${message}`;
+	const apiError = new NodeApiError(context.getNode(), { message } as JsonObject, {
+		message: fullMessage,
 		description: 'Check the Base URL, your network connection and any proxy settings.',
 	});
+	apiError.message = fullMessage;
+	return apiError;
 }
 
 function unexpectedResponse(

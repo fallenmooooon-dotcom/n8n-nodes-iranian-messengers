@@ -1,0 +1,39 @@
+name: Publish n8n-nodes-soroush
+
+on:
+  push:
+    tags:
+      - 'soroush-v*'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      PACKAGE_DIR: packages/n8n-nodes-soroush
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - run: npm ci
+      - name: Check that the tag matches the package version
+        run: |
+          VERSION=$(node -p "require('./${PACKAGE_DIR}/package.json').version")
+          if [ "${GITHUB_REF_NAME}" != "soroush-v${VERSION}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match package version ${VERSION}" >&2
+            exit 1
+          fi
+      - run: npm run lint --workspace packages/n8n-nodes-soroush
+      - run: npm run build --workspace packages/n8n-nodes-soroush
+      - run: npm test --workspace packages/n8n-nodes-soroush
+      - name: Publish with provenance
+        working-directory: ${{ env.PACKAGE_DIR }}
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

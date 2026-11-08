@@ -7,7 +7,7 @@ const DELETE_AFTER_VIEWS_FIELD: INodeProperties = {
 	typeOptions: { minValue: 0 },
 	default: 0,
 	description:
-		'Delete the message automatically once it has this many views. Leave at 0 to keep the message',
+		'Delete the message automatically once it has this many views (leave at 0 to keep the message)',
 };
 
 const DISABLE_NOTIFICATION_FIELD: INodeProperties = {
@@ -32,7 +32,7 @@ const REPLY_TO_FIELD: INodeProperties = {
 	type: 'number',
 	typeOptions: { minValue: 0 },
 	default: 0,
-	description: 'ID of the message to reply to. Leave at 0 to send a normal message',
+	description: 'ID of the message to reply to (leave at 0 to send a normal message)',
 };
 
 const SCHEDULE_DATE_FIELD: INodeProperties = {
@@ -40,7 +40,7 @@ const SCHEDULE_DATE_FIELD: INodeProperties = {
 	name: 'scheduleDate',
 	type: 'dateTime',
 	default: '',
-	description: 'Date and time when the message is sent. Leave empty to send it immediately',
+	description: 'Date and time when the message is sent (leave empty to send it immediately)',
 };
 
 const TITLE_FIELD: INodeProperties = {
@@ -137,7 +137,7 @@ export const eitaaYarProperties: INodeProperties[] = [
 		default: '',
 		displayOptions: { show: { resource: ['message'], operation: ['sendFile'] } },
 		description:
-			'Optional file name to send. EitaaYar picks the kind of media from the extension, so a GIF needs .gif and a sticker needs .webp',
+			'Optional file name to send (EitaaYar picks the kind of media from the extension, so a GIF needs .gif and a sticker needs .webp)',
 	},
 	{
 		displayName: 'Additional Fields',
@@ -193,7 +193,7 @@ export const eitaaYarProperties: INodeProperties[] = [
 				typeOptions: { minValue: 0 },
 				default: 0,
 				description:
-					'Milliseconds to wait between two input items. Useful when sending many messages in a row',
+					'Milliseconds to wait between two input items (useful when sending many messages in a row)',
 			},
 		],
 	},

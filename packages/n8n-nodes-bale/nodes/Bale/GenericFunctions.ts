@@ -54,7 +54,7 @@ async function loadCredentials(
 		if (error instanceof BaleValidationError) {
 			throw new NodeOperationError(context.getNode(), error.message);
 		}
-		throw error;
+		throw new NodeOperationError(context.getNode(), error as Error);
 	}
 }
 
@@ -93,10 +93,13 @@ function toNetworkError(
 	}
 	const raw = error instanceof Error ? error.message : String(error);
 	const message = redactSecret(raw, token);
-	return new NodeApiError(context.getNode(), { message } as JsonObject, {
-		message: `Could not reach the Bale API: ${message}`,
+	const fullMessage = `Could not reach the Bale API: ${message}`;
+	const apiError = new NodeApiError(context.getNode(), { message } as JsonObject, {
+		message: fullMessage,
 		description: 'Check the Base URL, your network connection and any proxy settings.',
 	});
+	apiError.message = fullMessage;
+	return apiError;
 }
 
 function unwrapEnvelope(context: BaleContext, response: FullResponse, token: string): unknown {

@@ -31,7 +31,7 @@ async function loadCredentials(
 		if (error instanceof EitaaValidationError) {
 			throw new NodeOperationError(context.getNode(), error.message);
 		}
-		throw error;
+		throw new NodeOperationError(context.getNode(), error as Error);
 	}
 }
 
@@ -85,16 +85,22 @@ export async function eitaaApiRequest(
 	try {
 		response = (await this.helpers.httpRequest(options)) as FullResponse;
 	} catch (error) {
-		if (error instanceof NodeApiError || error instanceof NodeOperationError) {
-			throw error;
+		if (error instanceof NodeApiError) {
+			throw new NodeApiError(this.getNode(), error as unknown as JsonObject);
+		}
+		if (error instanceof NodeOperationError) {
+			throw new NodeOperationError(this.getNode(), error);
 		}
 		// Network failures can mention the request URL, which contains the token.
 		const raw = error instanceof Error ? error.message : String(error);
 		const message = redactSecret(raw, token);
-		throw new NodeApiError(this.getNode(), { message } as JsonObject, {
-			message: `Could not reach the EitaaYar API: ${message}`,
+		const fullMessage = `Could not reach the EitaaYar API: ${message}`;
+		const apiError = new NodeApiError(this.getNode(), { message } as JsonObject, {
+			message: fullMessage,
 			description: 'Check the Base URL, your network connection and any proxy settings.',
 		});
+		apiError.message = fullMessage;
+		throw apiError;
 	}
 
 	const parsed = parseBody(response.body);

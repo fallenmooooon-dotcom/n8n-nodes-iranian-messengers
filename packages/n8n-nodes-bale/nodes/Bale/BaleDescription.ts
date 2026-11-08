@@ -18,7 +18,7 @@ const REPLY_TO_FIELD: INodeProperties = {
 	name: 'replyToMessageId',
 	type: 'number',
 	default: 0,
-	description: 'ID of the message to reply to. Leave at 0 to send a normal message',
+	description: 'ID of the message to reply to (leave at 0 to send a normal message)',
 };
 
 const PARSE_MODE_FIELD: INodeProperties = {
@@ -27,7 +27,7 @@ const PARSE_MODE_FIELD: INodeProperties = {
 	type: 'string',
 	default: '',
 	description:
-		'Optional. Sent only when set. Bale documents its own lightweight formatting markers and does not support the full Telegram Markdown or HTML syntax, so leave this empty unless you know Bale accepts the value',
+		'Optional formatting mode sent only when set (leave empty unless you know Bale accepts the value)',
 };
 
 export const baleProperties: INodeProperties[] = [
@@ -235,7 +235,7 @@ export const baleProperties: INodeProperties[] = [
 		default: '',
 		displayOptions: { show: { resource: CHAT_RESOURCES } },
 		description:
-			'Unique identifier of the chat, or the channel username in the format @channelusername. For Forward and Copy this is the target chat',
+			'Unique identifier of the chat, or the channel username in the format @channelusername (target chat for Forward and Copy)',
 	},
 	{
 		displayName: 'From Chat ID',
@@ -365,7 +365,7 @@ export const baleProperties: INodeProperties[] = [
 		displayOptions: {
 			show: { resource: ['message'], operation: ['sendMedia'], mediaSource: ['binary'] },
 		},
-		description: 'Optional file name to send. Defaults to the file name of the binary data',
+		description: 'Optional file name to send (defaults to the file name of the binary data)',
 	},
 	{
 		displayName: 'File ID',
@@ -388,7 +388,7 @@ export const baleProperties: INodeProperties[] = [
 			show: { resource: ['message'], operation: ['sendMedia'], mediaSource: ['url'] },
 		},
 		description:
-			'Public HTTP or HTTPS URL of the file. Bale limits URL downloads to 5 MB for photos and 20 MB for other types',
+			'Public HTTP or HTTPS URL of the file (Bale limits URL downloads to 5 MB for photos and 20 MB for other types)',
 	},
 	{
 		displayName: 'Caption',
@@ -448,7 +448,7 @@ export const baleProperties: INodeProperties[] = [
 				name: 'horizontalAccuracy',
 				type: 'number',
 				default: 0,
-				description: 'Radius of uncertainty in meters (0 to 1500). Leave at 0 to omit',
+				description: 'Radius of uncertainty in meters from 0 to 1500 (leave at 0 to omit)',
 			},
 			REPLY_MARKUP_FIELD,
 			REPLY_TO_FIELD,
@@ -597,7 +597,7 @@ export const baleProperties: INodeProperties[] = [
 				typeOptions: { minValue: 0 },
 				default: 0,
 				description:
-					'Milliseconds to wait between two input items. Use 1000 to stay within about one message per second to the same chat',
+					'Milliseconds to wait between two input items (use 1000 to stay within about one message per second to the same chat)',
 			},
 		],
 	},

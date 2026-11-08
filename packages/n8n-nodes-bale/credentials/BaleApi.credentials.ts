@@ -1,9 +1,11 @@
-import type { ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
+import type { Icon, ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class BaleApi implements ICredentialType {
 	name = 'baleApi';
 
 	displayName = 'Bale API';
+
+	icon: Icon = { light: 'file:bale.svg', dark: 'file:bale.dark.svg' };
 
 	documentationUrl = 'https://docs.bale.ai/';
 
@@ -16,7 +18,7 @@ export class BaleApi implements ICredentialType {
 			required: true,
 			default: '',
 			description:
-				'The bot token issued by @botfather in Bale. A leading "bot" prefix is removed automatically',
+				'The bot token issued by @botfather in Bale (a leading "bot" prefix is removed automatically)',
 		},
 		{
 			displayName: 'Base URL',
@@ -24,7 +26,7 @@ export class BaleApi implements ICredentialType {
 			type: 'string',
 			default: 'https://tapi.bale.ai',
 			description:
-				'Host of the Bale Bot API, without a trailing slash. Change it only if you use a proxy or a test environment',
+				'Host of the Bale Bot API without a trailing slash (change only if you use a proxy or a test environment)',
 		},
 	];
 
@@ -33,7 +35,7 @@ export class BaleApi implements ICredentialType {
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL:
-				'={{ $credentials.baseUrl.trim().replace(/\\/+$/, "") }}/bot{{ $credentials.accessToken.trim().replace(/^bot/i, "") }}',
+				'={{ ($credentials.baseUrl || "https://tapi.bale.ai").trim().replace(/\\/+$/, "") }}/bot{{ ($credentials.accessToken || "").trim().replace(/^bot/i, "") }}',
 			url: '/getMe',
 			method: 'GET',
 		},

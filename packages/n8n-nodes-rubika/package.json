@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "n8n community nodes for the Rubika messenger Bot API: send messages and files, manage chats and receive events by webhook or polling.",
   "license": "MIT",
-  "homepage": "https://github.com/mehran-asgharian/n8n-nodes-iranian-messengers/tree/main/packages/n8n-nodes-rubika#readme",
+  "homepage": "https://github.com/fallenmooooon-dotcom/n8n-nodes-iranian-messengers/tree/main/packages/n8n-nodes-rubika#readme",
   "keywords": [
     "n8n-community-node-package",
     "n8n",
@@ -18,11 +18,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mehran-asgharian/n8n-nodes-iranian-messengers.git",
+    "url": "git+https://github.com/fallenmooooon-dotcom/n8n-nodes-iranian-messengers.git",
     "directory": "packages/n8n-nodes-rubika"
   },
   "bugs": {
-    "url": "https://github.com/mehran-asgharian/n8n-nodes-iranian-messengers/issues"
+    "url": "https://github.com/fallenmooooon-dotcom/n8n-nodes-iranian-messengers/issues"
   },
   "engines": {
     "node": ">=20.19"
@@ -55,6 +55,7 @@
     "@n8n/node-cli": "*",
     "@types/node": "^22.0.0",
     "eslint": "^9.0.0",
+    "n8n-workflow": "*",
     "prettier": "^3.0.0",
     "typescript": "^5.9.0"
   },
