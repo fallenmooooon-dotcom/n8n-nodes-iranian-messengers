@@ -1,0 +1,62 @@
+{
+  "name": "n8n-nodes-eitaayar",
+  "version": "0.1.0",
+  "description": "n8n community node for the EitaaYar API: send text messages and files to Eitaa channels and groups, with scheduling, pinning and auto-delete.",
+  "license": "MIT",
+  "homepage": "https://github.com/mehran-asgharian/n8n-nodes-iranian-messengers/tree/main/packages/n8n-nodes-eitaayar#readme",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "eitaa",
+    "eitaayar",
+    "messenger",
+    "iran"
+  ],
+  "author": {
+    "name": "Mehran Asgharian",
+    "email": "info@homesaa.ir"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mehran-asgharian/n8n-nodes-iranian-messengers.git",
+    "directory": "packages/n8n-nodes-eitaayar"
+  },
+  "bugs": {
+    "url": "https://github.com/mehran-asgharian/n8n-nodes-iranian-messengers/issues"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "test": "tsc -p tsconfig.test.json && node --test .test-build/test/helpers.test.js .test-build/test/execute.test.js",
+    "prepublishOnly": "npm run build && npm run lint"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/EitaaYarApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/EitaaYar/EitaaYar.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "*",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.9.0"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}

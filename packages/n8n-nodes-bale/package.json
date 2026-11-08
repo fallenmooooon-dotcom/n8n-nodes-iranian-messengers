@@ -1,0 +1,63 @@
+{
+  "name": "n8n-nodes-bale",
+  "version": "0.1.0",
+  "description": "n8n community nodes for the Bale messenger Bot API: send messages and media, manage chats and receive updates by webhook.",
+  "license": "MIT",
+  "homepage": "https://github.com/mehran-asgharian/n8n-nodes-iranian-messengers/tree/main/packages/n8n-nodes-bale#readme",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "bale",
+    "messenger",
+    "bot",
+    "iran"
+  ],
+  "author": {
+    "name": "Mehran Asgharian",
+    "email": "info@homesaa.ir"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mehran-asgharian/n8n-nodes-iranian-messengers.git",
+    "directory": "packages/n8n-nodes-bale"
+  },
+  "bugs": {
+    "url": "https://github.com/mehran-asgharian/n8n-nodes-iranian-messengers/issues"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "test": "tsc -p tsconfig.test.json && node --test .test-build/test/helpers.test.js .test-build/test/execute.test.js .test-build/test/trigger.test.js",
+    "prepublishOnly": "npm run build && npm run lint"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/BaleApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Bale/Bale.node.js",
+      "dist/nodes/Bale/BaleTrigger.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "*",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.9.0"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}

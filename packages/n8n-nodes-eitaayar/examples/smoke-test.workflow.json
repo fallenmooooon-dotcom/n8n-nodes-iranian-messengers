@@ -1,0 +1,78 @@
+{
+  "name": "EitaaYar smoke test",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "9c3f7e5c-2c75-4c5e-9d86-9c2b5e3a0001",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "bot",
+        "operation": "getMe"
+      },
+      "id": "9c3f7e5c-2c75-4c5e-9d86-9c2b5e3a0002",
+      "name": "Check token (Get Me)",
+      "type": "n8n-nodes-eitaayar.eitaaYar",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendText",
+        "chatId": "",
+        "text": "=Hello from n8n at {{ $now.toFormat('HH:mm:ss') }}",
+        "additionalFields": {
+          "title": "n8n smoke test"
+        }
+      },
+      "id": "9c3f7e5c-2c75-4c5e-9d86-9c2b5e3a0003",
+      "name": "Send a test message",
+      "type": "n8n-nodes-eitaayar.eitaaYar",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "disabled": true,
+      "notes": "Enter your channel or group in Chat ID, then enable this node.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Check token (Get Me)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check token (Get Me)": {
+      "main": [
+        [
+          {
+            "node": "Send a test message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {}
+}

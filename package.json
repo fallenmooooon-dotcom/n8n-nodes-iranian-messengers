@@ -1,0 +1,22 @@
+{
+  "name": "n8n-nodes-iranian-messengers",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Monorepo of n8n community nodes for Iranian messaging platforms.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mehran-asgharian/n8n-nodes-iranian-messengers.git"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm test --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}
