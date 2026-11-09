@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-rubika",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n community nodes for the Rubika messenger Bot API: send messages and files, manage chats and receive events by webhook or polling.",
   "license": "MIT",
   "homepage": "https://github.com/fallenmooooon-dotcom/n8n-nodes-iranian-messengers/tree/main/packages/n8n-nodes-rubika#readme",

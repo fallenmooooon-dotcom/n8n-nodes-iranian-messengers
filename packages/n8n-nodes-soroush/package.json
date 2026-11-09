@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-soroush",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n community nodes for the Soroush Plus (سروش‌پلاس) Bot Platform and Mini App API: send messages and media, handle Mini App interactions, and receive updates by webhook or polling.",
   "license": "MIT",
   "homepage": "https://github.com/fallenmooooon-dotcom/n8n-nodes-iranian-messengers/tree/main/packages/n8n-nodes-soroush#readme",

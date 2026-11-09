@@ -2,6 +2,14 @@
 
 All notable changes to `n8n-nodes-soroush` will be documented in this file.
 
+## [0.1.1] - 2026-11-09
+
+### Fixed & Improved
+
+- Added `miniApp.verifyInitData` (`HMAC-SHA256` signature and `auth_date` freshness check) and `additionalFields` support on `sendMiniAppButton`.
+- Enabled `caption` on `sendAnimation`, `MarkdownV2` parse mode, `horizontal_accuracy` (`0`–`1500` m) on `sendLocation`, and `retry_after` rate-limit extraction.
+- Enforced allowed Soroush Plus webhook ports (`443`, `80`, `88`, `8443`), updated credential documentation URL to `https://soroushplus.com/p/documents`, and fixed initial polling offset handling.
+
 ## [0.1.0] - 2026-11-08
 
 ### Added

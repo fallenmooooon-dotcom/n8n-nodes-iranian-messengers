@@ -3,6 +3,10 @@
 All notable changes to `n8n-nodes-eitaayar` are documented here. The project follows
 [Semantic Versioning](https://semver.org/).
 
+## 0.1.1
+
+- Standardised credential and node property descriptions for strict `@n8n/node-cli` lint compliance.
+
 ## 0.1.0
 
 First release.

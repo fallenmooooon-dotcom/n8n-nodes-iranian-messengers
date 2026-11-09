@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-bale-ir",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n community nodes for the Bale messenger Bot API: send messages and media, manage chats and receive updates by webhook.",
   "license": "MIT",
   "homepage": "https://github.com/fallenmooooon-dotcom/n8n-nodes-iranian-messengers/tree/main/packages/n8n-nodes-bale#readme",

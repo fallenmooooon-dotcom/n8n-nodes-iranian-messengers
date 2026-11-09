@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-eitaayar",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n community node for the EitaaYar API: send text messages and files to Eitaa channels and groups, with scheduling, pinning and auto-delete.",
   "license": "MIT",
   "homepage": "https://github.com/fallenmooooon-dotcom/n8n-nodes-iranian-messengers/tree/main/packages/n8n-nodes-eitaayar#readme",

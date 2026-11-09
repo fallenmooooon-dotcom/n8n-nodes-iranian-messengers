@@ -18,7 +18,7 @@ export const FAKE_NODE: INode = {
 	id: 'node-1',
 	name: 'Bale',
 	typeVersion: 1,
-	type: 'n8n-nodes-bale.bale',
+	type: 'n8n-nodes-bale-ir.bale',
 	position: [0, 0],
 	parameters: {},
 };

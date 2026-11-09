@@ -16,7 +16,7 @@
       },
       "id": "6d1d5c3a-0a53-4a3c-9b64-7a0f3c1e0002",
       "name": "Check token (Get Me)",
-      "type": "n8n-nodes-bale.bale",
+      "type": "n8n-nodes-bale-ir.bale",
       "typeVersion": 1,
       "position": [240, 0]
     },
@@ -26,7 +26,7 @@
       },
       "id": "6d1d5c3a-0a53-4a3c-9b64-7a0f3c1e0003",
       "name": "Bale Trigger",
-      "type": "n8n-nodes-bale.baleTrigger",
+      "type": "n8n-nodes-bale-ir.baleTrigger",
       "typeVersion": 1,
       "position": [0, 240],
       "webhookId": "6d1d5c3a-0a53-4a3c-9b64-7a0f3c1e00aa"
@@ -63,7 +63,7 @@
       },
       "id": "6d1d5c3a-0a53-4a3c-9b64-7a0f3c1e0005",
       "name": "Echo the message",
-      "type": "n8n-nodes-bale.bale",
+      "type": "n8n-nodes-bale-ir.bale",
       "typeVersion": 1,
       "position": [480, 160]
     },
@@ -76,7 +76,7 @@
       },
       "id": "6d1d5c3a-0a53-4a3c-9b64-7a0f3c1e0006",
       "name": "Answer the button press",
-      "type": "n8n-nodes-bale.bale",
+      "type": "n8n-nodes-bale-ir.bale",
       "typeVersion": 1,
       "position": [480, 320]
     }
