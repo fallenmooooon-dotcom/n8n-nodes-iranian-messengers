@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mehran-asgharian/n8n-nodes-iranian-messengers.git"
+    "url": "git+https://github.com/fallenmooooon-dotcom/n8n-nodes-iranian-messengers.git"
   },
   "workspaces": [
     "packages/*"
