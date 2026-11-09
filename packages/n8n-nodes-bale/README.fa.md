@@ -1,4 +1,4 @@
-# n8n-nodes-bale
+# n8n-nodes-bale-ir
 
 نودهای انجمنی [n8n](https://n8n.io) برای API ربات‌های پیام‌رسان [بله](https://bale.ai).
 با این نودها می‌توانید از داخل ورک‌فلوهای n8n پیام و فایل بفرستید، چت‌ها را مدیریت کنید و به
@@ -35,7 +35,7 @@
 ## نصب
 
 در n8n شخصی‌سازی‌شده (self-hosted) به **Settings → Community Nodes → Install** بروید و
-`n8n-nodes-bale` را وارد کنید. برای نصب با Docker یا نصب دستی به
+`n8n-nodes-bale-ir` را وارد کنید. برای نصب با Docker یا نصب دستی به
 [راهنمای n8n](https://docs.n8n.io/integrations/community-nodes/installation/) مراجعه کنید.
 
 پیش‌نیازها: n8n نسخه‌ی 1.x و Node.js نسخه‌ی 20.19 یا بالاتر.

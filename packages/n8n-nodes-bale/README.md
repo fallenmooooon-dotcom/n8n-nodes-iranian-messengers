@@ -1,4 +1,4 @@
-# n8n-nodes-bale
+# n8n-nodes-bale-ir
 
 [n8n](https://n8n.io) community nodes for the [Bale](https://bale.ai) messenger Bot API.
 Send messages and media, manage chats and react to incoming messages and button presses
@@ -33,7 +33,7 @@ the photo, audio, document, video, voice or animation of a message as binary dat
 
 ## Installation
 
-Self-hosted n8n: open **Settings → Community Nodes → Install** and enter `n8n-nodes-bale`.
+Self-hosted n8n: open **Settings → Community Nodes → Install** and enter `n8n-nodes-bale-ir`.
 See the [n8n guide to installing community nodes](https://docs.n8n.io/integrations/community-nodes/installation/)
 for Docker and manual installs.
 

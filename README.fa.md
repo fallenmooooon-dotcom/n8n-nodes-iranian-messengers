@@ -6,7 +6,7 @@
 
 | بسته | پلتفرم | نودها |
 | --- | --- | --- |
-| [`n8n-nodes-bale`](packages/n8n-nodes-bale) | بله | Bale، Bale Trigger (وب‌هوک) |
+| [`n8n-nodes-bale-ir`](packages/n8n-nodes-bale) | بله | Bale، Bale Trigger (وب‌هوک) |
 | [`n8n-nodes-rubika`](packages/n8n-nodes-rubika) | روبیکا | Rubika، Rubika Trigger (وب‌هوک)، Rubika Poll Trigger |
 | [`n8n-nodes-eitaayar`](packages/n8n-nodes-eitaayar) | ایتا، از طریق API ایتایار | Eitaa (EitaaYar)، فقط ارسال |
 | [`n8n-nodes-soroush`](packages/n8n-nodes-soroush) | سروش‌پلاس | Soroush Plus، Soroush Plus Trigger (وب‌هوک)، Soroush Plus Poll Trigger |
@@ -18,7 +18,7 @@
 
 ```text
 packages/
-  n8n-nodes-bale/       نود عملیاتی و تریگر بله
+  n8n-nodes-bale-ir/       نود عملیاتی و تریگر بله
   n8n-nodes-rubika/     نود عملیاتی، تریگر وب‌هوک و تریگر پولینگ روبیکا
   n8n-nodes-eitaayar/   نود عملیاتی ایتایار
   n8n-nodes-soroush/    نود عملیاتی، تریگر وب‌هوک، تریگر پولینگ و پشتیبانی برنامک (Mini App) سروش‌پلاس
