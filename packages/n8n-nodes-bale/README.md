@@ -25,6 +25,7 @@ from your workflows.
 | Chat Member | Ban, Unban |
 | File | Get (information, optionally download as binary data) |
 | Message | Send Text, Send Media (photo, audio, document, video, voice, animation), Send Location, Send Contact, Forward, Copy, Edit Text, Delete |
+| Payment | Send Invoice, Answer Pre-Checkout Query |
 
 ### Bale Trigger
 
@@ -97,6 +98,15 @@ reference, for example an inline keyboard:
 When a user presses a `callback_data` button, **Bale Trigger** (with **Callback Query** selected)
 emits the update. Use **Callback Query → Answer** with `{{ $json.callback_query.id }}` to
 acknowledge it.
+
+### In-app Payments (Bale Wallet)
+
+1. Use **Payment → Send Invoice** to send an in-app payment invoice:
+   - Provide **Chat ID**, **Title** (1–32 chars), **Description** (1–255 chars), **Payload** (1–128 bytes), and **Provider Token** (from `@BotFather` or test token `WALLET-TEST-1111111111111111`).
+   - Add one or more **Prices** items with **Label** and **Amount** (in Rials for IRR).
+   - Optional parameters: Product photo (URL, dimensions, size), customer data requirements (`needName`, `needPhoneNumber`, `needEmail`, `needShippingAddress`), and `isFlexible`.
+2. When the user confirms the purchase, Bale sends a `pre_checkout_query` update.
+3. Call **Payment → Answer Pre-Checkout Query** within 10 seconds with **OK: true** to approve the payment, or **OK: false** with an **Error Message** to reject it.
 
 ### Receive messages
 

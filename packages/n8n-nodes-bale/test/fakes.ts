@@ -26,6 +26,7 @@ export const FAKE_NODE: INode = {
 /** A fake token. The leading "bot" checks that the prefix is normalised away. */
 export const RAW_TOKEN = 'bot123456:FAKE-TOKEN-for-tests';
 export const CLEAN_TOKEN = '123456:FAKE-TOKEN-for-tests';
+export const TEST_PROVIDER_TOKEN = 'test-provider-token';
 export const API_ROOT = `https://tapi.bale.ai/bot${CLEAN_TOKEN}`;
 
 export interface ScriptedResponse {

@@ -7,7 +7,7 @@ import { NodeApiError, NodeOperationError } from 'n8n-workflow';
 import type { IDataObject, IHttpRequestOptions } from 'n8n-workflow';
 
 import { Bale } from '../nodes/Bale/Bale.node';
-import { API_ROOT, CLEAN_TOKEN, makeExecuteContext, ok } from './fakes';
+import { API_ROOT, CLEAN_TOKEN, TEST_PROVIDER_TOKEN, makeExecuteContext, ok } from './fakes';
 import type { ExecuteOptions } from './fakes';
 
 async function run(options: ExecuteOptions) {
@@ -394,6 +394,236 @@ describe('Bale node: other resources', () => {
 				responses: [ok({ file_id: 'F1', file_path: 'x.bin', file_size: 21 * 1024 * 1024 })],
 			}),
 			(error: Error) => error instanceof NodeOperationError && /20 MB/.test(error.message),
+		);
+	});
+});
+
+describe('Bale node: payment operations', () => {
+	it('sends an invoice with fixed collection prices and default currency', async () => {
+		const { output, http } = await run({
+			params: {
+				resource: 'payment',
+				operation: 'sendInvoice',
+				chatId: '123456',
+				title: 'Course Subscription',
+				description: 'Access to premium lessons',
+				payload: 'sub_12345',
+				providerToken: TEST_PROVIDER_TOKEN,
+				currency: 'IRR',
+				prices: {
+					priceItems: [
+						{ label: 'Original Price', amount: 100000 },
+						{ label: 'Tax', amount: 9000 },
+					],
+				},
+				additionalFields: {
+					photoUrl: 'https://example.com/banner.png',
+					photoWidth: 600,
+					photoHeight: 400,
+					needName: true,
+					needPhoneNumber: true,
+					isFlexible: false,
+					replyMarkup: '{"inline_keyboard":[[{"text":"Pay Now","pay":true}]]}',
+				},
+			},
+			responses: [ok({ message_id: 101, invoice: { title: 'Course Subscription' } })],
+		});
+
+		assert.equal(http.calls.length, 1);
+		assert.equal(http.calls[0].url, `${API_ROOT}/sendInvoice`);
+		assert.equal(http.calls[0].method, 'POST');
+		assert.deepEqual(bodyOf(http.calls[0]), {
+			chat_id: 123456,
+			title: 'Course Subscription',
+			description: 'Access to premium lessons',
+			payload: 'sub_12345',
+			provider_token: TEST_PROVIDER_TOKEN,
+			currency: 'IRR',
+			prices: [
+				{ label: 'Original Price', amount: 100000 },
+				{ label: 'Tax', amount: 9000 },
+			],
+			photo_url: 'https://example.com/banner.png',
+			photo_width: 600,
+			photo_height: 400,
+			need_name: true,
+			need_phone_number: true,
+			reply_markup: {
+				inline_keyboard: [[{ text: 'Pay Now', pay: true }]],
+			},
+		});
+		assert.deepEqual(output[0][0].json, { message_id: 101, invoice: { title: 'Course Subscription' } });
+	});
+
+	it('sends an invoice with JSON prices string', async () => {
+		const { http } = await run({
+			params: {
+				resource: 'payment',
+				operation: 'sendInvoice',
+				chatId: '@sales_channel',
+				title: 'E-Book',
+				description: 'PDF guide',
+				payload: 'order_99',
+				providerToken: TEST_PROVIDER_TOKEN,
+				prices: '[{"label":"Item","amount":50000}]',
+				additionalFields: {
+					needEmail: true,
+					needShippingAddress: true,
+					sendPhoneNumberToProvider: true,
+					sendEmailToProvider: true,
+					isFlexible: true,
+					photoSize: 1024,
+				},
+			},
+			responses: [ok({ message_id: 102 })],
+		});
+
+		assert.deepEqual(bodyOf(http.calls[0]), {
+			chat_id: '@sales_channel',
+			title: 'E-Book',
+			description: 'PDF guide',
+			payload: 'order_99',
+			provider_token: TEST_PROVIDER_TOKEN,
+			currency: 'IRR',
+			prices: [{ label: 'Item', amount: 50000 }],
+			need_email: true,
+			need_shipping_address: true,
+			send_phone_number_to_provider: true,
+			send_email_to_provider: true,
+			is_flexible: true,
+			photo_size: 1024,
+		});
+	});
+
+	it('validates invoice parameters before calling the API', async () => {
+		const base = {
+			resource: 'payment',
+			operation: 'sendInvoice',
+			chatId: '123',
+			title: 'Product',
+			description: 'Desc',
+			payload: 'payload',
+			providerToken: 'TOKEN',
+			prices: { priceItems: [{ label: 'Price', amount: 1000 }] },
+		};
+
+		await assert.rejects(
+			run({ params: { ...base, title: ' ' }, responses: [] }),
+			(error: Error) => error instanceof NodeOperationError && /Title must not be empty/.test(error.message),
+		);
+		await assert.rejects(
+			run({ params: { ...base, title: 'a'.repeat(33) }, responses: [] }),
+			(error: Error) => error instanceof NodeOperationError && /maximum is 32/.test(error.message),
+		);
+
+		await assert.rejects(
+			run({ params: { ...base, description: '' }, responses: [] }),
+			(error: Error) => error instanceof NodeOperationError && /Description must not be empty/.test(error.message),
+		);
+		await assert.rejects(
+			run({ params: { ...base, description: 'd'.repeat(256) }, responses: [] }),
+			(error: Error) => error instanceof NodeOperationError && /maximum is 255/.test(error.message),
+		);
+
+		await assert.rejects(
+			run({ params: { ...base, payload: 'x'.repeat(129) }, responses: [] }),
+			(error: Error) => error instanceof NodeOperationError && /maximum is 128/.test(error.message),
+		);
+
+		await assert.rejects(
+			run({ params: { ...base, providerToken: '  ' }, responses: [] }),
+			(error: Error) => error instanceof NodeOperationError && /Provider Token must not be empty/.test(error.message),
+		);
+
+		await assert.rejects(
+			run({ params: { ...base, prices: { priceItems: [] } }, responses: [] }),
+			(error: Error) => error instanceof NodeOperationError && /at least one item/.test(error.message),
+		);
+		await assert.rejects(
+			run({ params: { ...base, prices: 'not-json' }, responses: [] }),
+			(error: Error) => error instanceof NodeOperationError && /Prices is not valid JSON/.test(error.message),
+		);
+		await assert.rejects(
+			run({ params: { ...base, prices: '{"invalid": true}' }, responses: [] }),
+			(error: Error) => error instanceof NodeOperationError && /at least one item/.test(error.message),
+		);
+		await assert.rejects(
+			run({ params: { ...base, prices: { priceItems: [{ label: '', amount: 100 }] } }, responses: [] }),
+			(error: Error) => error instanceof NodeOperationError && /Price item #1 label must not be empty/.test(error.message),
+		);
+		await assert.rejects(
+			run({ params: { ...base, prices: { priceItems: [{ label: 'Item', amount: 0 }] } }, responses: [] }),
+			(error: Error) => error instanceof NodeOperationError && /Price item #1 amount must be a positive whole number/.test(error.message),
+		);
+	});
+
+	it('answers pre-checkout query with ok: true', async () => {
+		const { output, http } = await run({
+			params: {
+				resource: 'payment',
+				operation: 'answerPreCheckoutQuery',
+				preCheckoutQueryId: 'query_123',
+				ok: true,
+			},
+			responses: [ok(true)],
+		});
+
+		assert.equal(http.calls.length, 1);
+		assert.equal(http.calls[0].url, `${API_ROOT}/answerPreCheckoutQuery`);
+		assert.deepEqual(bodyOf(http.calls[0]), {
+			pre_checkout_query_id: 'query_123',
+			ok: true,
+		});
+		assert.deepEqual(output[0][0].json, { success: true });
+	});
+
+	it('answers pre-checkout query with ok: false and error message', async () => {
+		const { http } = await run({
+			params: {
+				resource: 'payment',
+				operation: 'answerPreCheckoutQuery',
+				preCheckoutQueryId: 'query_456',
+				ok: false,
+				errorMessage: 'Product is out of stock',
+			},
+			responses: [ok(true)],
+		});
+
+		assert.deepEqual(bodyOf(http.calls[0]), {
+			pre_checkout_query_id: 'query_456',
+			ok: false,
+			error_message: 'Product is out of stock',
+		});
+	});
+
+	it('validates pre-checkout query parameters', async () => {
+		await assert.rejects(
+			run({
+				params: {
+					resource: 'payment',
+					operation: 'answerPreCheckoutQuery',
+					preCheckoutQueryId: '',
+					ok: true,
+				},
+				responses: [],
+			}),
+			(error: Error) =>
+				error instanceof NodeOperationError && /Pre-Checkout Query ID must not be empty/.test(error.message),
+		);
+
+		await assert.rejects(
+			run({
+				params: {
+					resource: 'payment',
+					operation: 'answerPreCheckoutQuery',
+					preCheckoutQueryId: 'query_789',
+					ok: false,
+					errorMessage: '   ',
+				},
+				responses: [],
+			}),
+			(error: Error) =>
+				error instanceof NodeOperationError && /Error Message must not be empty/.test(error.message),
 		);
 	});
 });

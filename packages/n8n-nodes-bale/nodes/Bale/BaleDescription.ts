@@ -1,7 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 /** Message operations that address a single chat (the target chat for forward and copy). */
-const CHAT_RESOURCES = ['chat', 'chatMember', 'message'];
+const CHAT_RESOURCES = ['chat', 'chatMember', 'message', 'payment'];
 
 const REPLY_MARKUP_FIELD: INodeProperties = {
 	displayName: 'Reply Markup (JSON)',
@@ -46,8 +46,31 @@ export const baleProperties: INodeProperties[] = [
 			{ name: 'Chat Member', value: 'chatMember' },
 			{ name: 'File', value: 'file' },
 			{ name: 'Message', value: 'message' },
+			{ name: 'Payment', value: 'payment' },
 		],
 		default: 'message',
+	},
+	{
+		displayName: 'Operation',
+		name: 'operation',
+		type: 'options',
+		noDataExpression: true,
+		displayOptions: { show: { resource: ['payment'] } },
+		options: [
+			{
+				name: 'Answer Pre-Checkout Query',
+				value: 'answerPreCheckoutQuery',
+				action: 'Answer a pre checkout query',
+				description: 'Respond to an incoming pre-checkout query to approve or reject a payment',
+			},
+			{
+				name: 'Send Invoice',
+				value: 'sendInvoice',
+				action: 'Send an invoice',
+				description: 'Send a payment request (invoice) to a user or chat using the Bale Wallet',
+			},
+		],
+		default: 'sendInvoice',
 	},
 	{
 		displayName: 'Operation',
@@ -233,7 +256,10 @@ export const baleProperties: INodeProperties[] = [
 		type: 'string',
 		required: true,
 		default: '',
-		displayOptions: { show: { resource: CHAT_RESOURCES } },
+		displayOptions: {
+			show: { resource: CHAT_RESOURCES },
+			hide: { resource: ['payment'], operation: ['answerPreCheckoutQuery'] },
+		},
 		description:
 			'Unique identifier of the chat, or the channel username in the format @channelusername (target chat for Forward and Copy)',
 	},
@@ -578,6 +604,216 @@ export const baleProperties: INodeProperties[] = [
 				description: 'Whether to do nothing if the user is not banned',
 			},
 		],
+	},
+
+	/* ---------------------------------------------------------------------- */
+	/*  Payment: Send Invoice                                                 */
+	/* ---------------------------------------------------------------------- */
+	{
+		displayName: 'Title',
+		name: 'title',
+		type: 'string',
+		required: true,
+		default: '',
+		displayOptions: { show: { resource: ['payment'], operation: ['sendInvoice'] } },
+		description: 'Product or service name (1-32 characters)',
+	},
+	{
+		displayName: 'Description',
+		name: 'description',
+		type: 'string',
+		required: true,
+		default: '',
+		displayOptions: { show: { resource: ['payment'], operation: ['sendInvoice'] } },
+		description: 'Product or service description (1-255 characters)',
+	},
+	{
+		displayName: 'Payload',
+		name: 'payload',
+		type: 'string',
+		required: true,
+		default: '',
+		displayOptions: { show: { resource: ['payment'], operation: ['sendInvoice'] } },
+		description: 'Bot-defined invoice payload (1-128 bytes) returned in the SuccessfulPayment update',
+	},
+	{
+		displayName: 'Provider Token',
+		name: 'providerToken',
+		type: 'string',
+		typeOptions: { password: true },
+		required: true,
+		default: 'WALLET-TEST-1111111111111111',
+		displayOptions: { show: { resource: ['payment'], operation: ['sendInvoice'] } },
+		description:
+			'Payment provider token issued by @BotFather, or WALLET-TEST-1111111111111111 for testing without real money transfer',
+	},
+	{
+		displayName: 'Currency',
+		name: 'currency',
+		type: 'string',
+		default: 'IRR',
+		displayOptions: { show: { resource: ['payment'], operation: ['sendInvoice'] } },
+		description: 'Three-letter ISO 4217 currency code (e.g. IRR)',
+	},
+	{
+		displayName: 'Prices',
+		name: 'prices',
+		placeholder: 'Add Price Item',
+		type: 'fixedCollection',
+		typeOptions: {
+			multipleValues: true,
+		},
+		default: {},
+		displayOptions: { show: { resource: ['payment'], operation: ['sendInvoice'] } },
+		description: 'Breakdown of components that make up the total price',
+		options: [
+			{
+				name: 'priceItems',
+				displayName: 'Price Items',
+				values: [
+					{
+						displayName: 'Amount',
+						name: 'amount',
+						type: 'number',
+						default: 10000,
+						description: 'Portion price in the smallest currency unit (Rials for IRR)',
+					},
+					{
+						displayName: 'Label',
+						name: 'label',
+						type: 'string',
+						default: '',
+						description: 'Portion label (e.g. "Product Price" or "Delivery")',
+					},
+				],
+			},
+		],
+	},
+	{
+		displayName: 'Additional Fields',
+		name: 'additionalFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		default: {},
+		displayOptions: { show: { resource: ['payment'], operation: ['sendInvoice'] } },
+		options: [
+			{
+				displayName: 'Is Flexible',
+				name: 'isFlexible',
+				type: 'boolean',
+				default: false,
+				description: 'Whether the final price depends on the shipping method',
+			},
+			{
+				displayName: 'Need Email',
+				name: 'needEmail',
+				type: 'boolean',
+				default: false,
+				description: 'Whether you require the user\'s email address to complete the order',
+			},
+			{
+				displayName: 'Need Name',
+				name: 'needName',
+				type: 'boolean',
+				default: false,
+				description: 'Whether you require the user\'s full name to complete the order',
+			},
+			{
+				displayName: 'Need Phone Number',
+				name: 'needPhoneNumber',
+				type: 'boolean',
+				default: false,
+				description: 'Whether you require the user\'s phone number to complete the order',
+			},
+			{
+				displayName: 'Need Shipping Address',
+				name: 'needShippingAddress',
+				type: 'boolean',
+				default: false,
+				description: 'Whether you require the user\'s shipping address to complete the order',
+			},
+			{
+				displayName: 'Photo Height',
+				name: 'photoHeight',
+				type: 'number',
+				default: 0,
+				description: 'Photo height in pixels',
+			},
+			{
+				displayName: 'Photo Size',
+				name: 'photoSize',
+				type: 'number',
+				default: 0,
+				description: 'Photo size in bytes',
+			},
+			{
+				displayName: 'Photo URL',
+				name: 'photoUrl',
+				type: 'string',
+				default: '',
+				description: 'URL of the product photo for the invoice',
+			},
+			{
+				displayName: 'Photo Width',
+				name: 'photoWidth',
+				type: 'number',
+				default: 0,
+				description: 'Photo width in pixels',
+			},
+			REPLY_MARKUP_FIELD,
+			REPLY_TO_FIELD,
+			{
+				displayName: 'Send Email to Provider',
+				name: 'sendEmailToProvider',
+				type: 'boolean',
+				default: false,
+				description: 'Whether the user\'s email address should be sent to the provider',
+			},
+			{
+				displayName: 'Send Phone Number to Provider',
+				name: 'sendPhoneNumberToProvider',
+				type: 'boolean',
+				default: false,
+				description: 'Whether the user\'s phone number should be sent to the provider',
+			},
+		],
+	},
+
+	/* ---------------------------------------------------------------------- */
+	/*  Payment: Answer Pre-Checkout Query                                    */
+	/* ---------------------------------------------------------------------- */
+	{
+		displayName: 'Pre-Checkout Query ID',
+		name: 'preCheckoutQueryId',
+		type: 'string',
+		required: true,
+		default: '',
+		displayOptions: { show: { resource: ['payment'], operation: ['answerPreCheckoutQuery'] } },
+		description: 'Unique identifier for the query to be answered (from pre_checkout_query update)',
+	},
+	{
+		displayName: 'OK',
+		name: 'ok',
+		type: 'boolean',
+		required: true,
+		default: true,
+		displayOptions: { show: { resource: ['payment'], operation: ['answerPreCheckoutQuery'] } },
+		description:
+			'Whether everything is alright and the bot is ready to proceed with the order. Set to false if there are problems.',
+	},
+	{
+		displayName: 'Error Message',
+		name: 'errorMessage',
+		type: 'string',
+		default: '',
+		displayOptions: {
+			show: {
+				resource: ['payment'],
+				operation: ['answerPreCheckoutQuery'],
+				ok: [false],
+			},
+		},
+		description: 'Error message explaining to the user why the payment cannot proceed (required when OK is false)',
 	},
 
 	/* ---------------------------------------------------------------------- */

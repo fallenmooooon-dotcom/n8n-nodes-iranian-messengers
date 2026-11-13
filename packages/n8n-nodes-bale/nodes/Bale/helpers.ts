@@ -187,6 +187,47 @@ export function requireHttpUrl(value: string, label: string): string {
 	return url;
 }
 
+export interface LabeledPrice {
+	label: string;
+	amount: number;
+}
+
+/** Validates and parses the prices array for an invoice. */
+export function validatePrices(raw: unknown): LabeledPrice[] {
+	let items: unknown = raw;
+	if (typeof raw === 'string') {
+		let parseFailed = false;
+		try {
+			items = JSON.parse(raw);
+		} catch {
+			parseFailed = true;
+		}
+		if (parseFailed) {
+			throw new BaleValidationError('Prices is not valid JSON');
+		}
+	}
+	if (items !== null && typeof items === 'object' && !Array.isArray(items)) {
+		const obj = items as Record<string, unknown>;
+		if (Array.isArray(obj.priceItems)) {
+			items = obj.priceItems;
+		} else if (Array.isArray(obj.prices)) {
+			items = obj.prices;
+		}
+	}
+	if (!Array.isArray(items) || items.length === 0) {
+		throw new BaleValidationError('Prices must contain at least one item');
+	}
+	return items.map((item, idx) => {
+		if (item === null || typeof item !== 'object') {
+			throw new BaleValidationError(`Price item #${idx + 1} must be an object`);
+		}
+		const row = item as Record<string, unknown>;
+		const label = requireNonEmpty(String(row.label ?? ''), `Price item #${idx + 1} label`);
+		const amount = requirePositiveInteger(row.amount, `Price item #${idx + 1} amount`);
+		return { label, amount };
+	});
+}
+
 /**
  * Bale only delivers webhooks to HTTPS URLs on port 443 or 88. Throws a
  * descriptive error when the URL n8n would register cannot work.

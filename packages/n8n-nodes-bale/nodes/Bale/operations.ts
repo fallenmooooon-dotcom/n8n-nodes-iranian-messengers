@@ -15,6 +15,7 @@ import {
 	requirePositiveInteger,
 	requireText,
 	validateLength,
+	validatePrices,
 } from './helpers';
 import type { MediaType, MultipartFile } from './helpers';
 
@@ -315,7 +316,84 @@ const otherHandlers: Record<string, Handler> = {
 	},
 };
 
-const handlers: Record<string, Handler> = { ...messageHandlers, ...otherHandlers };
+const paymentHandlers: Record<string, Handler> = {
+	'payment.sendInvoice': async (context, i) => {
+		const title = requireText(context.getNodeParameter('title', i) as string, 'Title', 32);
+		const description = requireText(
+			context.getNodeParameter('description', i) as string,
+			'Description',
+			255,
+		);
+		const payload = requireText(context.getNodeParameter('payload', i) as string, 'Payload', 128);
+		const providerToken = requireNonEmpty(
+			context.getNodeParameter('providerToken', i) as string,
+			'Provider Token',
+		);
+		const currency = (context.getNodeParameter('currency', i, 'IRR') as string) || 'IRR';
+		const rawPrices = context.getNodeParameter('prices', i);
+		const prices = validatePrices(rawPrices);
+
+		const body: IDataObject = {
+			chat_id: readChatId(context, i),
+			title,
+			description,
+			payload,
+			provider_token: providerToken,
+			currency,
+			prices,
+		};
+
+		const additional = additionalFields(context, i);
+		if (additional.photoUrl) {
+			body.photo_url = requireHttpUrl(additional.photoUrl as string, 'Photo URL');
+		}
+		if (additional.photoSize !== undefined && Number(additional.photoSize) > 0) {
+			body.photo_size = Number(additional.photoSize);
+		}
+		if (additional.photoWidth !== undefined && Number(additional.photoWidth) > 0) {
+			body.photo_width = Number(additional.photoWidth);
+		}
+		if (additional.photoHeight !== undefined && Number(additional.photoHeight) > 0) {
+			body.photo_height = Number(additional.photoHeight);
+		}
+		if (additional.needName === true) body.need_name = true;
+		if (additional.needPhoneNumber === true) body.need_phone_number = true;
+		if (additional.needEmail === true) body.need_email = true;
+		if (additional.needShippingAddress === true) body.need_shipping_address = true;
+		if (additional.sendPhoneNumberToProvider === true) body.send_phone_number_to_provider = true;
+		if (additional.sendEmailToProvider === true) body.send_email_to_provider = true;
+		if (additional.isFlexible === true) body.is_flexible = true;
+
+		Object.assign(body, buildExtras(additional));
+
+		return { json: toJson(await baleApiRequest.call(context, 'sendInvoice', body)) };
+	},
+
+	'payment.answerPreCheckoutQuery': async (context, i) => {
+		const preCheckoutQueryId = requireNonEmpty(
+			context.getNodeParameter('preCheckoutQueryId', i) as string,
+			'Pre-Checkout Query ID',
+		);
+		const ok = context.getNodeParameter('ok', i, true) as boolean;
+		const body: IDataObject = {
+			pre_checkout_query_id: preCheckoutQueryId,
+			ok,
+		};
+		if (!ok) {
+			body.error_message = requireNonEmpty(
+				context.getNodeParameter('errorMessage', i, '') as string,
+				'Error Message',
+			);
+		}
+		return { json: toJson(await baleApiRequest.call(context, 'answerPreCheckoutQuery', body)) };
+	},
+};
+
+const handlers: Record<string, Handler> = {
+	...messageHandlers,
+	...otherHandlers,
+	...paymentHandlers,
+};
 
 /** Runs one operation for one input item. */
 export async function executeOperation(

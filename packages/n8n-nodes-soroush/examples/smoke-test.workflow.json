@@ -22,7 +22,28 @@
     },
     {
       "parameters": {
-        "updates": ["message", "callback_query", "web_app_data"]
+        "resource": "miniApp",
+        "operation": "sendMiniAppButton",
+        "chatId": "",
+        "text": "برای باز کردن برنامک روی دکمه زیر کلیک کنید:",
+        "buttonText": "باز کردن برنامک",
+        "miniAppUrl": "https://example.com/miniapp",
+        "keyboardKind": "inline",
+        "additionalFields": {}
+      },
+      "id": "8a1d5c3a-0a53-4a3c-9b64-7a0f3c1e0005",
+      "name": "Send Mini App Button",
+      "type": "n8n-nodes-soroush.soroush",
+      "typeVersion": 1,
+      "position": [480, 0],
+      "disabled": true,
+      "notes": "شناسه چت (Chat ID) را وارد کرده و نود را فعال کنید",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "updates": ["message", "callback_query", "web_app_data"],
+        "downloadMedia": false
       },
       "id": "8a1d5c3a-0a53-4a3c-9b64-7a0f3c1e0003",
       "name": "Soroush Plus Trigger",
@@ -35,20 +56,21 @@
       "parameters": {
         "resource": "message",
         "operation": "sendText",
-        "chatId": "={{ $json.message.chat.id }}",
-        "text": "=Echo: {{ $json.message.text || '(no text)' }}",
+        "chatId": "={{ $json.message ? $json.message.chat.id : $json.callback_query.message.chat.id }}",
+        "text": "={{ $json.web_app_data_parsed ? 'داده برنامک: ' + JSON.stringify($json.web_app_data_parsed) : 'Echo: ' + ($json.message?.text || $json.callback_query?.data || '(no text)') }}",
         "additionalFields": {}
       },
       "id": "8a1d5c3a-0a53-4a3c-9b64-7a0f3c1e0004",
-      "name": "Echo the message",
+      "name": "Echo or Handle Mini App Data",
       "type": "n8n-nodes-soroush.soroush",
       "typeVersion": 1,
-      "position": [240, 240]
+      "position": [260, 240]
     }
   ],
   "connections": {
     "Run manually": { "main": [[{ "node": "Check token (Get Me)", "type": "main", "index": 0 }]] },
-    "Soroush Plus Trigger": { "main": [[{ "node": "Echo the message", "type": "main", "index": 0 }]] }
+    "Check token (Get Me)": { "main": [[{ "node": "Send Mini App Button", "type": "main", "index": 0 }]] },
+    "Soroush Plus Trigger": { "main": [[{ "node": "Echo or Handle Mini App Data", "type": "main", "index": 0 }]] }
   },
   "pinData": {},
   "meta": {}

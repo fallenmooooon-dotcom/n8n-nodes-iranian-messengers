@@ -1,0 +1,419 @@
+{
+  "name": "Iranian Messengers — All-in-One Test Suite (Soroush+, Bale, EitaaYar, Rubika)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## راهنمای تست یکپارچه پیام‌رسان‌های ایرانی (v0.1.1)\n1. در هر نود، **Credential** مربوط به همان پیام‌رسان را انتخاب یا ایجاد کنید.\n2. برای تست اتصال توکن‌ها، روی **Test workflow (Run manually)** کلیک کنید تا `Get Me` روی هر ۴ پیام‌رسان اجرا شود.\n3. برای تست ارسال پیام و دکمه برنامک (Mini App)، در نود **Test Chat IDs** شناسه‌های چت (`chatId`) را وارد کرده و نودهای ارسال را از حالت غیرفعال (`Deactivate`) خارج کنید.\n4. در بخش پایین، تریگرهای **وب‌هوک و پولینگ** سروش‌پلاس، بله و روبیکا آماده پاسخ‌گویی خودکار (Echo + پاسخ به دکمه شیشه‌ای + دریافت داده برنامک) هستند.",
+        "height": 220,
+        "width": 920,
+        "color": 4
+      },
+      "id": "10000000-0000-4000-8000-000000000001",
+      "name": "Sticky Note — Guide",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [0, -280]
+    },
+    {
+      "parameters": {},
+      "id": "10000000-0000-4000-8000-000000000002",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 120]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "soroush-chat-id",
+              "name": "soroushChatId",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "bale-chat-id",
+              "name": "baleChatId",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "eitaa-chat-id",
+              "name": "eitaaChatId",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "rubika-chat-id",
+              "name": "rubikaChatId",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "mini-app-url",
+              "name": "miniAppUrl",
+              "value": "https://example.com/miniapp",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "10000000-0000-4000-8000-000000000003",
+      "name": "Test Chat IDs",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [240, 120],
+      "notes": "شناسه‌های چت (chatId) هر پیام‌رسان را برای تست ارسال دستی اینجا وارد کنید",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "resource": "bot",
+        "operation": "getMe"
+      },
+      "id": "10000000-0000-4000-8000-000000000010",
+      "name": "Soroush+ — Get Me",
+      "type": "n8n-nodes-soroush.soroush",
+      "typeVersion": 1,
+      "position": [520, -120]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendText",
+        "chatId": "={{ $('Test Chat IDs').item.json.soroushChatId }}",
+        "text": "=✅ تست پیام متنی سروش‌پلاس از n8n در ساعت {{ $now.toFormat('HH:mm:ss') }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "10000000-0000-4000-8000-000000000011",
+      "name": "Soroush+ — Send Text",
+      "type": "n8n-nodes-soroush.soroush",
+      "typeVersion": 1,
+      "position": [780, -180],
+      "disabled": true,
+      "notes": "پس از وارد کردن soroushChatId فعال کنید",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "resource": "miniApp",
+        "operation": "sendMiniAppButton",
+        "chatId": "={{ $('Test Chat IDs').item.json.soroushChatId }}",
+        "text": "برای باز کردن برنامک (Mini App) سروش‌پلاس روی دکمه زیر بزنید:",
+        "buttonText": "🚀 اجرای برنامک",
+        "miniAppUrl": "={{ $('Test Chat IDs').item.json.miniAppUrl }}",
+        "keyboardKind": "inline",
+        "additionalFields": {}
+      },
+      "id": "10000000-0000-4000-8000-000000000012",
+      "name": "Soroush+ — Send Mini App Button",
+      "type": "n8n-nodes-soroush.soroush",
+      "typeVersion": 1,
+      "position": [780, -40],
+      "disabled": true,
+      "notes": "تست ارسال دکمه شیشه‌ای برنامک سروش‌پلاس",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "resource": "bot",
+        "operation": "getMe"
+      },
+      "id": "10000000-0000-4000-8000-000000000020",
+      "name": "Bale — Get Me",
+      "type": "n8n-nodes-bale-ir.bale",
+      "typeVersion": 1,
+      "position": [520, 80]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendText",
+        "chatId": "={{ $('Test Chat IDs').item.json.baleChatId }}",
+        "text": "=✅ تست پیام متنی بله از n8n در ساعت {{ $now.toFormat('HH:mm:ss') }}",
+        "additionalFields": {}
+      },
+      "id": "10000000-0000-4000-8000-000000000021",
+      "name": "Bale — Send Text",
+      "type": "n8n-nodes-bale-ir.bale",
+      "typeVersion": 1,
+      "position": [780, 80],
+      "disabled": true,
+      "notes": "پس از وارد کردن baleChatId فعال کنید",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "resource": "bot",
+        "operation": "getMe"
+      },
+      "id": "10000000-0000-4000-8000-000000000030",
+      "name": "EitaaYar — Get Me",
+      "type": "n8n-nodes-eitaayar.eitaaYar",
+      "typeVersion": 1,
+      "position": [520, 240]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendText",
+        "chatId": "={{ $('Test Chat IDs').item.json.eitaaChatId }}",
+        "text": "=✅ تست پیام ایتایار از n8n در ساعت {{ $now.toFormat('HH:mm:ss') }}",
+        "additionalFields": {
+          "title": "تست n8n",
+          "pin": false
+        }
+      },
+      "id": "10000000-0000-4000-8000-000000000031",
+      "name": "EitaaYar — Send Text",
+      "type": "n8n-nodes-eitaayar.eitaaYar",
+      "typeVersion": 1,
+      "position": [780, 240],
+      "disabled": true,
+      "notes": "پس از وارد کردن eitaaChatId فعال کنید",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "resource": "bot",
+        "operation": "getMe"
+      },
+      "id": "10000000-0000-4000-8000-000000000040",
+      "name": "Rubika — Get Me",
+      "type": "n8n-nodes-rubika.rubika",
+      "typeVersion": 1,
+      "position": [520, 400]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendText",
+        "chatId": "={{ $('Test Chat IDs').item.json.rubikaChatId }}",
+        "text": "=✅ تست پیام **روبیکا** از n8n در ساعت {{ $now.toFormat('HH:mm:ss') }}",
+        "formatting": "markdown",
+        "additionalFields": {}
+      },
+      "id": "10000000-0000-4000-8000-000000000041",
+      "name": "Rubika — Send Text",
+      "type": "n8n-nodes-rubika.rubika",
+      "typeVersion": 1,
+      "position": [780, 400],
+      "disabled": true,
+      "notes": "پس از وارد کردن rubikaChatId فعال کنید",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query",
+          "web_app_data"
+        ],
+        "downloadMedia": false
+      },
+      "id": "10000000-0000-4000-8000-000000000050",
+      "name": "Soroush+ Webhook Trigger",
+      "type": "n8n-nodes-soroush.soroushTrigger",
+      "typeVersion": 1,
+      "position": [0, 660],
+      "webhookId": "10000000-0000-4000-8000-0000000000aa"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendText",
+        "chatId": "={{ $json.message ? $json.message.chat.id : $json.callback_query.message.chat.id }}",
+        "text": "={{ $json.web_app_data_parsed ? '📦 داده برنامک دریافت شد: ' + JSON.stringify($json.web_app_data_parsed) : '📩 پیام شما در سروش‌پلاس دریافت شد: ' + ($json.message?.text || $json.callback_query?.data || '(بدون متن)') }}",
+        "additionalFields": {}
+      },
+      "id": "10000000-0000-4000-8000-000000000051",
+      "name": "Soroush+ — Auto Reply",
+      "type": "n8n-nodes-soroush.soroush",
+      "typeVersion": 1,
+      "position": [280, 660]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ]
+      },
+      "id": "10000000-0000-4000-8000-000000000060",
+      "name": "Bale Webhook Trigger",
+      "type": "n8n-nodes-bale-ir.baleTrigger",
+      "typeVersion": 1,
+      "position": [0, 860],
+      "webhookId": "10000000-0000-4000-8000-0000000000bb"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendText",
+        "chatId": "={{ $json.message ? $json.message.chat.id : $json.callback_query.message.chat.id }}",
+        "text": "=📩 پیام شما در بله دریافت شد: {{ $json.message?.text || $json.callback_query?.data || '(بدون متن)' }}",
+        "additionalFields": {}
+      },
+      "id": "10000000-0000-4000-8000-000000000061",
+      "name": "Bale — Auto Reply",
+      "type": "n8n-nodes-bale-ir.bale",
+      "typeVersion": 1,
+      "position": [280, 860]
+    },
+    {
+      "parameters": {
+        "events": [
+          "NewMessage"
+        ],
+        "limit": 50
+      },
+      "id": "10000000-0000-4000-8000-000000000070",
+      "name": "Rubika Poll Trigger",
+      "type": "n8n-nodes-rubika.rubikaPollTrigger",
+      "typeVersion": 1,
+      "position": [0, 1060]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendText",
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=📩 پیام شما در روبیکا دریافت شد: {{ $json.new_message?.text || '(بدون متن)' }}",
+        "formatting": "none",
+        "additionalFields": {}
+      },
+      "id": "10000000-0000-4000-8000-000000000071",
+      "name": "Rubika — Auto Reply",
+      "type": "n8n-nodes-rubika.rubika",
+      "typeVersion": 1,
+      "position": [280, 1060]
+    }
+  ],
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Test Chat IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Chat IDs": {
+      "main": [
+        [
+          {
+            "node": "Soroush+ — Get Me",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Bale — Get Me",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "EitaaYar — Get Me",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Rubika — Get Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Soroush+ — Get Me": {
+      "main": [
+        [
+          {
+            "node": "Soroush+ — Send Text",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Soroush+ — Send Mini App Button",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bale — Get Me": {
+      "main": [
+        [
+          {
+            "node": "Bale — Send Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EitaaYar — Get Me": {
+      "main": [
+        [
+          {
+            "node": "EitaaYar — Send Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rubika — Get Me": {
+      "main": [
+        [
+          {
+            "node": "Rubika — Send Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Soroush+ Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Soroush+ — Auto Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bale Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Bale — Auto Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rubika Poll Trigger": {
+      "main": [
+        [
+          {
+            "node": "Rubika — Auto Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {}
+}
